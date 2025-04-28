@@ -30,36 +30,7 @@ EcoMercado/
 ├── product-service/    # Microsserviço de produtos (porta 5001)
 ├── docker-compose.yml  # Orquestração com Docker
 └── README.md           # Documentação
-
-
-## 🚀 Como Executar o Projeto
-
-### ✅ Pré-requisitos
-
-- Docker Desktop instalado
-- WSL 2 configurado no Windows
-- Extensão WSL instalada no VSCode
-
----
-
-### 🧠 Configuração do Docker com WSL
-
-1. Abra o **Docker Desktop**
-2. Vá em **Settings > Resources > WSL Integration**
-3. Ative **“Enable integration with my default WSL distro”**
-4. Marque sua distribuição Linux (ex: Ubuntu)
-5. Clique em **Apply & Restart**
-
----
-
-### 💻 Passos para Rodar no VSCode
-
-1. Clone o repositório:
-
-```bash
-git clone https://github.com/mari-ww/Eco-Mercado
-cd Eco-Mercado
-
+```
 
 ## 🚀 Como Executar o Projeto
 
@@ -88,25 +59,54 @@ cd Eco-Mercado
 ```bash
 git clone https://github.com/mari-ww/Eco-Mercado
 cd Eco-Mercado
+```
 
+## 🚀 Como Executar o Projeto
+
+### ✅ Pré-requisitos
+
+- Docker Desktop instalado
+- WSL 2 configurado no Windows
+- Extensão WSL instalada no VSCode
+
+---
+
+### 🧠 Configuração do Docker com WSL
+
+1. Abra o **Docker Desktop**
+2. Vá em **Settings > Resources > WSL Integration**
+3. Ative **“Enable integration with my default WSL distro”**
+4. Marque sua distribuição Linux (ex: Ubuntu)
+5. Clique em **Apply & Restart**
+
+---
+
+### 💻 Passos para Rodar no VSCode
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/mari-ww/Eco-Mercado
+cd Eco-Mercado
+```
 
 2. No VSCode, pressione Ctrl+Shift+P e selecione:
 
 ```makefile
 WSL: Reopen Folder in WSL
-
+```
 
 3. No terminal integrado do VSCode, instale as dependências:
 
 ```bash
 npm install
-
+```
 
 4. Inicie os containers com:
 
 ```bash
 docker-compose up --build
-
+```
 
 ## 🌐 Endpoints REST
 
@@ -137,7 +137,7 @@ Content-Type: application/json
   "id": 1,
   "nome": "Lucas Verde"
 }
-
+```
 
 ## ✅ Funcionalidades Demonstradas
 

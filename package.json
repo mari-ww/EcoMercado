@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "name": "mimomarket",
     "version": "1.0.0",
     "description": "Mini e-commerce de produtos artesanais",
@@ -11,3 +12,9 @@
     }
   }
   
+=======
+  "dependencies": {
+    "amqplib": "^0.10.7"
+  }
+}
+>>>>>>> 8c318d0 (Adiciona integração com RabbitMQ)

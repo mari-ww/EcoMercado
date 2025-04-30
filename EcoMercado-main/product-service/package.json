@@ -1,0 +1,17 @@
+{
+    "name": "product-service",
+    "version": "1.0.0",
+    "description": "Microserviço de Produtos",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "grpc": "node grpcServer.js"
+    },
+    "dependencies": {
+        "@grpc/grpc-js": "^1.13.3",
+        "@grpc/proto-loader": "^0.7.14",
+        "axios": "^1.8.4",
+        "express": "^4.17.1"
+    }
+    
+}

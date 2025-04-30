@@ -1,0 +1,53 @@
+version: '3'
+services:
+  # Serviço de Usuários
+  user-service:
+    build:
+      context: ./user-service
+    ports:
+      - "5000:5000"  # A porta pode ser ajustada conforme necessário
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/users_db
+    depends_on:
+      - db
+    networks:
+      - mimo_network
+    volumes:
+      - ./user-service:/usr/src/app
+      - ./proto:/usr/src/app/proto
+
+  # Serviço de Produtos
+  product-service:
+    build:
+      context: ./product-service
+    ports:
+      - "5001:5001"  # Alterado para a porta 5001 no host
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/products_db
+    depends_on:
+      - db
+    networks:
+      - mimo_network
+    volumes:
+      - ./product-service:/usr/src/app
+      - ./proto:/usr/src/app/proto
+
+  # Banco de Dados
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=users_db   # Pode ser ajustado conforme o banco de dados
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - mimo_network
+
+  # Rede para comunicação entre os containers
+networks:
+  mimo_network:
+    driver: bridge
+
+volumes:
+  db_data:

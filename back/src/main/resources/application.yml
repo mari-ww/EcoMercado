@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: gateway-service
+
+  datasource:
+    url: jdbc:h2:file:./db;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/usuarios/**
+          filters:
+            - StripPrefix=1
+
+        - id: client-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/clientes/**
+          filters:
+            - StripPrefix=1
+
+        - id: product-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/produtos/**
+          filters:
+            - StripPrefix=1
+
+  security:
+    basic: 
+      enable: false
+    user: 
+      name: admin
+      password: 4796
+  
+  sql:
+    init:
+      mode: always
+  
+      
+
+server:
+  port: 8080
+
+h2:
+  console:
+    enabled: true
+    path: /db

@@ -31,7 +31,17 @@ services:
     volumes:
       - ./product-service:/usr/src/app
       - ./proto:/usr/src/app/proto
+    
+  # Serviço de Mensageria RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"      # Porta usada pelos serviços para se conectar (AMQP)
+      - "15672:15672"    # Interface web pra monitorar
+    networks:
+      - mimo_network
 
+  
   # Banco de Dados
   db:
     image: postgres:13

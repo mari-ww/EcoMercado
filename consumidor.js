@@ -5,7 +5,7 @@ const amqp = require('amqplib');
 
 async function consumirPedidos() {
   try {
-    const connection = await amqp.connect('amqp://localhost');
+    const connection = await amqp.connect('amqp://rabbitmq');
     const channel = await connection.createChannel();
 
     const fila = 'fila_pedidos';

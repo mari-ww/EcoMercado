@@ -1,0 +1,8 @@
+{
+  "name": "pedido",
+  "version": "1.0.0",
+  "main": "enviarParaPagamento.js",
+  "dependencies": {
+    "amqplib": "^0.8.0"
+  }
+}

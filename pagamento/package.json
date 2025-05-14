@@ -1,0 +1,8 @@
+{
+  "name": "pagamento",
+  "version": "1.0.0",
+  "main": "consumidorPagamento.js",
+  "dependencies": {
+    "amqplib": "^0.8.0"
+  }
+}

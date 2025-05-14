@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expor a porta em que o serviço de produtos vai rodar
-EXPOSE 5001
+EXPOSE 5000
 
 # Comando para iniciar o servidor
 CMD ["npm", "start"]

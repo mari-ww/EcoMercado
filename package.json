@@ -1,20 +1,14 @@
 {
-<<<<<<< HEAD
-    "name": "mimomarket",
-    "version": "1.0.0",
-    "description": "Mini e-commerce de produtos artesanais",
-    "main": "index.js",
-    "scripts": {
-      "start": "node index.js"
-    },
-    "dependencies": {
-      "express": "^4.17.1"
-    }
-  }
-  
-=======
+  "name": "mimomarket",
+  "version": "1.0.0",
+  "description": "Mini e-commerce de produtos artesanais",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
+    "express": "^4.17.1",
     "amqplib": "^0.10.7"
   }
 }
->>>>>>> 8c318d0 (Adiciona integração com RabbitMQ)
+

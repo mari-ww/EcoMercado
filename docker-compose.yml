@@ -41,18 +41,6 @@ services:
     networks:
       - mimo_network
 
-  # Banco de Dados
-  db:
-    image: postgres:13
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=users_db
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      - mimo_network
-
   # Serviço de Pedido (envia pedidos e escuta confirmação)
   pedido:
     build:
@@ -78,9 +66,47 @@ services:
       - ./pagamento:/usr/src/app
     command: node consumidorPagamento.js
 
+  # Serviço de Produtor (envia pedidos para a fila)
+  produtor:
+    build:
+      context: ./produtor-service
+    depends_on:
+      - rabbitmq
+    networks:
+      - mimo_network
+    volumes:
+      - ./produtor-service:/usr/src/app
+
+  # Serviço de Entrega (API REST + consumidor de fila)
+  entrega-service:
+    build:
+      context: ./entrega-service
+    command: node index.js
+    depends_on:
+      - rabbitmq
+    networks:
+      - mimo_network
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./entrega-service:/usr/src/app
+
+  # Banco de Dados
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=users_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - mimo_network
+
 networks:
   mimo_network:
     driver: bridge
 
 volumes:
   db_data:
+

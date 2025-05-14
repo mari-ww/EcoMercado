@@ -1,7 +1,7 @@
 {
-  "name": "mimomarket",
+  "name": "mimomarket-ecomer",
   "version": "1.0.0",
-  "description": "Mini e-commerce de produtos artesanais",
+  "description": "Mini e-commerce de produtos artesanais e ecológicos",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -11,4 +11,3 @@
     "amqplib": "^0.10.7"
   }
 }
-

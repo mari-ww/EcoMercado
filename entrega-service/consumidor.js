@@ -1,7 +1,5 @@
-// entrega-service/consumidor.js
-
 const amqp = require('amqplib');
-const { criarEntrega } = require('./database'); // importa função de criação
+const { criarEntrega, atualizarStatus } = require('./database'); // importa função de criação e atualização
 
 async function consumirPedidos() {
   try {
@@ -15,14 +13,26 @@ async function consumirPedidos() {
 
     channel.consume(fila, (msg) => {
       if (msg !== null) {
-        const pedido = JSON.parse(msg.content.toString());
-        console.log('✅ Pedido recebido:', pedido);
+        try {
+          const pedido = JSON.parse(msg.content.toString());
+          console.log('✅ Pedido recebido:', pedido);
 
-        // Cria nova entrega com base no pedido
-        const novaEntrega = criarEntrega(pedido.id, pedido.cliente);
-        console.log('📦 Entrega criada:', novaEntrega);
+          const novaEntrega = criarEntrega(pedido.id, pedido.cliente);
+          console.log('📦 Entrega criada:', novaEntrega);
 
-        channel.ack(msg); // Confirma que a mensagem foi processada
+          // Simulação de atualização de status após 3 segundos
+          setTimeout(() => {
+            const statusAtual = novaEntrega.status;
+            const proximoStatus = statusAtual === 'Pendente' ? 'Aguardando Pagamento' : statusAtual === 'Aguardando Pagamento' ? 'Pagamento Efetuado' : statusAtual === 'Pagamento Efetuado' ? 'Aguardando Entrega' : 'Entrega Efetuada';
+            
+            atualizarStatus(pedido.id, proximoStatus);
+            console.log(`🟢 Status atualizado para: ${proximoStatus}`);
+          }, 3000); // Atualiza o status após 3 segundos
+
+          channel.ack(msg); // Confirma que a mensagem foi processada
+        } catch (erro) {
+          console.error('Erro ao processar mensagem:', erro);
+        }
       }
     });
   } catch (error) {

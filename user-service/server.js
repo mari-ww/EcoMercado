@@ -1,67 +1,54 @@
-const axios = require('axios');  // Para fazer requisições HTTP
+const axios = require('axios');
 const express = require('express');
-const client = require('./grpcClient');
+const client = require('prom-client'); // <-- monitoramento
 const app = express();
 const port = 5000;
 
-let usuarios = [];  // Lista de usuários temporária
+const register = client.register;
+client.collectDefaultMetrics(); // coleta padrão
+
+let produtos = [];  // Lista de produtos temporária
 
 app.use(express.json());
 
-// Endpoint para cadastrar usuário
-app.post('/usuarios', (req, res) => {
-  const usuario = req.body;
-  usuarios.push(usuario);
-  res.status(201).send(usuario);
+// Endpoint Prometheus
+app.get('/metrics', async (req, res) => {
+  console.log('Endpoint /metrics foi chamado');
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
 });
 
-// Endpoint para listar todos os usuários
-app.get('/usuarios', (req, res) => {
-  res.json(usuarios);
+// Endpoint para cadastrar produto
+app.post('/produtos', (req, res) => {
+  const produto = req.body;
+  produtos.push(produto);
+  res.status(201).send(produto);
 });
 
-// Endpoint para obter todos os produtos via microserviço de Produtos
-app.get('/produtos', async (req, res) => {
-  try {
-    const response = await axios.get('http://product-service:6000/produtos');
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).send('Erro ao comunicar com o microserviço de Produtos');
-  }
+// Endpoint para listar todos os produtos
+app.get('/produtos', (req, res) => {
+  res.json(produtos);
 });
 
 // Endpoint de exemplo
 app.get('/', (req, res) => {
-  res.send('Usuários - Microserviço');
+  res.send('Produtos - Microserviço');
 });
 
-// Rota que retorna um usuário com base no id.
-app.get('/users/:id', (req, res) => {
-  const users = [
-    { id: 1, nome: 'Maria Artesã' },
-    { id: 2, nome: 'João Artesão' },
-  ];
-
-  const user = users.find(u => u.id === parseInt(req.params.id));
-
-  if (!user) {
-    return res.status(404).json({ error: 'Usuário não encontrado' });
+// rota pra buscar dados do usuário
+app.get('/usuario-de-produto/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const resposta = await axios.get(`http://user-service:5000/users/${id}`);
+    res.json({
+      mensagem: 'Dados do usuário retornados via REST!',
+      usuario: resposta.data,
+    });
+  } catch (erro) {
+    res.status(500).json({ erro: 'Erro ao buscar usuário', detalhe: erro.message });
   }
-
-  res.json(user);
 });
 
-// Comunicação gRPC
-app.get('/product/:id', (req, res) => {
-  client.getProduct({ id: req.params.id }, (err, response) => {
-    if (err) {
-      return res.status(404).json({ error: err.message });
-    }
-    res.json(response);
-  });
-});
-
-// Iniciar o serviço de usuários na porta 5000
 app.listen(port, () => {
-  console.log(`Serviço de Usuários rodando na porta ${port}`);
+  console.log(`Serviço de Produtos rodando na porta ${port}`);
 });

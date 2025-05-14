@@ -8,6 +8,3 @@ RUN npm install
 COPY . .
 
 CMD ["node", "escutarConfirmacaoPagamento.js"]
-
-
-

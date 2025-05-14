@@ -36,8 +36,8 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5672:5672"      # AMQP
+      - "15672:15672"    # Painel web
     networks:
       - mimo_network
 
@@ -51,10 +51,12 @@ services:
       - mimo_network
     volumes:
       - ./pedido:/usr/src/app
+    # O "&&" só executa o segundo comando se o primeiro der certo.
+    # Se quiser que rodem em paralelo, use "sh -c 'node script1.js & node script2.js'"
     command: >
-      sh -c "node enviarParaPagamento.js && node escutarConfirmacaoPagamento.js"
+      sh -c "node enviarParaPagamento.js & node escutarConfirmacaoPagamento.js"
 
-  # Serviço de Pagamento (consome pedido e confirma pagamento)
+  # Serviço de Pagamento
   pagamento:
     build:
       context: ./pagamento
@@ -66,7 +68,7 @@ services:
       - ./pagamento:/usr/src/app
     command: node consumidorPagamento.js
 
-  # Serviço de Produtor (envia pedidos para a fila)
+  # Serviço de Produtor
   produtor:
     build:
       context: ./produtor-service
@@ -77,11 +79,10 @@ services:
     volumes:
       - ./produtor-service:/usr/src/app
 
-  # Serviço de Entrega (API REST + consumidor de fila)
+  # Serviço de Entrega
   entrega-service:
     build:
       context: ./entrega-service
-    command: node index.js
     depends_on:
       - rabbitmq
     networks:
@@ -90,6 +91,7 @@ services:
       - "3002:3002"
     volumes:
       - ./entrega-service:/usr/src/app
+    command: node index.js
 
   # Banco de Dados
   db:
@@ -109,4 +111,5 @@ networks:
 
 volumes:
   db_data:
+
 

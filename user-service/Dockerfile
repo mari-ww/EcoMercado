@@ -7,6 +7,9 @@ COPY package*.json ./
 
 RUN npm install
 
+# Instala o netcat (nc)
+RUN apt-get update && apt-get install -y netcat
+
 COPY . .
 
 EXPOSE 5001

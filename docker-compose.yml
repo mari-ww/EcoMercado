@@ -5,7 +5,7 @@ services:
     build:
       context: ./user-service
     ports:
-      - "5000:5000"  # A porta pode ser ajustada conforme necessário
+      - "5000:5000"
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/users_db
     depends_on:
@@ -21,7 +21,7 @@ services:
     build:
       context: ./product-service
     ports:
-      - "5001:5001"  # Alterado para a porta 5001 no host
+      - "5001:5001"
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/products_db
     depends_on:
@@ -31,30 +31,53 @@ services:
     volumes:
       - ./product-service:/usr/src/app
       - ./proto:/usr/src/app/proto
-    
-  # Serviço de Mensageria RabbitMQ
+
+  # RabbitMQ com interface de gerenciamento
   rabbitmq:
     image: rabbitmq:3-management
     ports:
-      - "5672:5672"      # Porta usada pelos serviços para se conectar (AMQP)
-      - "15672:15672"    # Interface web pra monitorar
+      - "5672:5672"
+      - "15672:15672" # interface web
     networks:
       - mimo_network
 
-  
+  # Serviço de Produtor (envia pedidos para a fila)
+  produtor:
+    build:
+      context: ./produtor-service
+    depends_on:
+      - rabbitmq
+    networks:
+      - mimo_network
+    volumes:
+      - ./produtor-service:/usr/src/app
+
+  # Serviço de Entrega (API REST + consumidor de fila)
+  entrega-service:
+    build:
+      context: ./entrega-service
+    command: node index.js
+    depends_on:
+      - rabbitmq
+    networks:
+      - mimo_network
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./entrega-service:/usr/src/app
+
   # Banco de Dados
   db:
     image: postgres:13
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=users_db   # Pode ser ajustado conforme o banco de dados
+      - POSTGRES_DB=users_db
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
       - mimo_network
 
-  # Rede para comunicação entre os containers
 networks:
   mimo_network:
     driver: bridge

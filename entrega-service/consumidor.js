@@ -1,5 +1,6 @@
 const amqp = require('amqplib');
 const { criarEntrega, atualizarStatus } = require('./database'); // importa função de criação e atualização
+const { enviarParaPagamento } = require('./enviarPagamento');
 
 async function consumirPedidos() {
   try {
@@ -20,14 +21,7 @@ async function consumirPedidos() {
           const novaEntrega = criarEntrega(pedido.id, pedido.cliente);
           console.log('📦 Entrega criada:', novaEntrega);
 
-          // Simulação de atualização de status após 3 segundos
-          setTimeout(() => {
-            const statusAtual = novaEntrega.status;
-            const proximoStatus = statusAtual === 'Pendente' ? 'Aguardando Pagamento' : statusAtual === 'Aguardando Pagamento' ? 'Pagamento Efetuado' : statusAtual === 'Pagamento Efetuado' ? 'Aguardando Entrega' : 'Entrega Efetuada';
-            
-            atualizarStatus(pedido.id, proximoStatus);
-            console.log(`🟢 Status atualizado para: ${proximoStatus}`);
-          }, 3000); // Atualiza o status após 3 segundos
+          enviarParaPagamento(pedido);
 
           channel.ack(msg); // Confirma que a mensagem foi processada
         } catch (erro) {

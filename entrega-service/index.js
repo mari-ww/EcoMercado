@@ -9,3 +9,4 @@ app.listen(3002, () => console.log('🚚 entrega-service rodando na porta 3002')
 
 // Aqui iniciamos o consumidor
 require('./consumidor');
+require('./escutarConfirmacaoPagamento.js');

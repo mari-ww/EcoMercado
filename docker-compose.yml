@@ -125,6 +125,7 @@ services:
     environment:
       - USERS_SERVICE=http://user-service:5000
       - PRODUCTS_SERVICE=http://product-service:5001
+      - ENTREGA_SERVICE=http://entrega-service:3002
 
     depends_on:
       - user-service

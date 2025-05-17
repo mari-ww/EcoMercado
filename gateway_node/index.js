@@ -6,6 +6,7 @@ const CB = require('opossum')
 
 const USERS_SERVICE = process.env.USERS_SERVICE?.trim()
 const PRODUCTS_SERVICE = process.env.PRODUCTS_SERVICE?.trim()
+const ENTREGA_SERVICE = process.env.ENTREGA_SERVICE?.trim()
 const PORT = process.env.PORT?.trim()
 
 // Middleware de autenticação
@@ -108,7 +109,47 @@ fastify.get('/products*' , async (request,reply) => {
     reply.code(503).send({ error: 'Erro ao acessar o serviço PRODUTOS!! LASCOU DOIDO EM DOBRO', details: err.message })
   }
 })
+// ===========================================================================
+//  Circuit Breaker Entrega
 
+const entregaService = async (path,headers) => {
+  const fullPath = path || '/entregas'
+  const url  = `${ENTREGA_SERVICE}${fullPath}`
+  fastify.log.info(`➡️ ENTREGAS URL: ${url}`)
+  
+  const response = await axios.get(url, { headers })
+  return response.data
+}
+
+const entregasBreaker = new CB(entregaService , {
+    timeout: 3000,
+    errorThresholdPercentage: 50,
+    resetTimeout: 10000,
+})
+
+entregasBreaker.fallback(() => ({ error: "Serviço de entrega indisponivel! Ai tururu na veia" }))
+
+
+fastify.get('/entregas' , async (request,reply) => {
+  fastify.log.info("Esse eh a rota ENTREGA foi ativada!")
+  try {
+    const data  = await entregasBreaker.fire('',request.headers)
+    reply.send(data)
+  } catch (error) {
+    reply.code(503).send({ error: 'Erro ao acessar o /entregas, ai eh de cair o ** da *****', detaisl: error.message })
+  }
+})
+
+fastify.get('/entregas*' , async (request,reply) => {
+  fastify.log.info("Esse eh ENTREGAS** q foi ativado!")
+  try {
+    const path = request.raw.url.replace('/entregas', '')
+    const data  = await entregasBreaker.fire(path,request.headers)
+    reply.send(data)
+  } catch (e) {
+    reply.code(503).send({ e: "ERRO ao acessar ENTREGAS** POHA MENOR", details: e.message })
+  }
+})
 
 
 

@@ -15,4 +15,5 @@ COPY wait-for-rabbitmq.sh /wait-for-rabbitmq.sh
 RUN chmod +x /wait-for-rabbitmq.sh
 
 # Comando para iniciar o container
-CMD ["node", "index.js"]
+CMD ["/wait-for-rabbitmq.sh", "rabbitmq", "node", "index.js"]
+

@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   # Serviço de Usuários
   user-service:
@@ -116,17 +116,27 @@ services:
     depends_on:
       - prometheus
     restart: always
-  gateway:
+  gateway-node:
     build:
-      context: ./gateway
+      context: ./gateway_node
+    container_name: api-gateway-node
     ports:
       - "8080:8080"
+    environment:
+      - USERS_SERVICE=http://user-service:5000
+      - PRODUCTS_SERVICE=http://product-service:5001
+
     depends_on:
       - user-service
       - product-service
       - entrega-service
     networks:
       - mimo_network
+    volumes:
+      - ./gateway_node:/usr/src/app
+
+      
+
 
 
 

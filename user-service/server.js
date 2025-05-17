@@ -31,8 +31,8 @@ app.get('/produtos', (req, res) => {
 });
 
 // Endpoint de exemplo
-app.get('/', (req, res) => {
-  res.send('Produtos - Microserviço');
+app.get('/users', (req, res) => {
+  res.send('User - Microserviço');
 });
 
 // rota pra buscar dados do usuário
